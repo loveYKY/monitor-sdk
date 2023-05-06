@@ -1,5 +1,4 @@
-//performance 性能监控
-import { performanceObj } from "./types";
+import observeFirstScreenPaint from "../../utils/firstScreenTime.js";
 
 interface IperformenceDaya {
   RedirectTime: number;
@@ -13,6 +12,7 @@ interface IperformenceDaya {
   FP_Time: number;
   FCP_Time: number;
   LCP_Time: number;
+  FirstScreenTime: number;
 }
 
 export class PerformanceMonitor {
@@ -38,19 +38,22 @@ export class PerformanceMonitor {
       FP_Time: 0,
       FCP_Time: 0,
       LCP_Time: 0,
+      FirstScreenTime: 0,
     };
     this.performance = window.performance;
     this.timingInfo = window.performance.timing;
   }
 
-  public async start() {
+  public start() {
     /**
      * 异步检测performance数据是否完备
      */
+    this.getFirstScreenTime();
+
     const entry = this.performance.getEntriesByType("navigation")[0];
     if (this.isDataExist(entry)) {
-      //...
-      await Promise.all([
+      //启动性能监控
+      Promise.all([
         this.getRedirectTime(),
         this.getDnsTime(),
         this.getDomContentLoadTime(),
@@ -62,9 +65,12 @@ export class PerformanceMonitor {
         this.getFpTime(),
         this.getFcpTime(),
         this.getLcpTime(),
-      ]);
-      console.log(this.performanceData)
-    } else setTimeout(this.start.bind(this), 0);
+      ]).then(() => {
+        console.log(this.performanceData);
+      });
+    } else {
+      setTimeout(this.start.bind(this), 0);
+    }
   }
 
   private isDataExist(entry: any): boolean {
@@ -121,7 +127,7 @@ export class PerformanceMonitor {
       this.timingInfo.loadEventStart - this.timingInfo.navigationStart;
   }
 
-  //FP time，首屏/白屏时间
+  //FP time，白屏时间
   public async getFpTime() {
     const entryHandler: PerformanceObserverCallback = (list) => {
       for (const entry of list.getEntries()) {
@@ -132,7 +138,6 @@ export class PerformanceMonitor {
       }
     };
     const observer = new PerformanceObserver(entryHandler);
-    // buffered 属性表示是否观察缓存数据，也就是说观察代码添加时机比事情触发时机晚也没关系。
     observer.observe({ type: "paint", buffered: true });
   }
 
@@ -147,7 +152,6 @@ export class PerformanceMonitor {
       }
     };
     const observer = new PerformanceObserver(entryHandler);
-    // buffered 属性表示是否观察缓存数据，也就是说观察代码添加时机比事情触发时机晚也没关系。
     observer.observe({ type: "paint", buffered: true });
   }
 
@@ -163,7 +167,13 @@ export class PerformanceMonitor {
       }
     };
     const observer = new PerformanceObserver(entryHandler);
-    // buffered 属性表示是否观察缓存数据，也就是说观察代码添加时机比事情触发时机晚也没关系。
     observer.observe({ type: "largest-contentful-paint", buffered: true });
+  }
+
+  // 首屏时间 FirstScreenTime
+  public getFirstScreenTime() {
+    observeFirstScreenPaint((time: number) => {
+      this.performanceData.FirstScreenTime = time;
+    });
   }
 }
