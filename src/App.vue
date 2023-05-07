@@ -22,17 +22,6 @@ export default defineComponent({
   setup() {
     let p = new PerformanceMonitor();
     p.start();
-    console.log(p);
-
-    // let observer = new window.MutationObserver((mutationList) => {
-    //   console.log(mutationList);
-    // });
-    // observer.observe(document, {
-    //   childList: true, // 监听添加或删除子节点
-    //   subtree: true, // 监听整个子树
-    //   characterData: true, // 监听元素的文本是否变化
-    //   attributes: true, // 监听元素的属性是否变化
-    // });
   },
 });
 </script>
