@@ -1,6 +1,14 @@
 import observeFirstScreenPaint from "../../utils/firstScreenTime.js";
 
-interface IperformenceDaya {
+interface ICacheHitRatio {
+  total: number;
+  mandatory_caching: number;
+  negotiation_cache: number;
+  no_cache: number;
+  cacheRatio: number;
+}
+
+interface IperformenceData {
   RedirectTime: number;
   DnsTime: number;
   DomContentLoadTime: number;
@@ -13,12 +21,15 @@ interface IperformenceDaya {
   FCP_Time: number;
   LCP_Time: number;
   FirstScreenTime: number;
+  CacheHitRatio: ICacheHitRatio;
 }
+
+// type Iresource
 
 export class PerformanceMonitor {
   private performance!: Performance;
   private timingInfo!: PerformanceTiming;
-  public performanceData!: IperformenceDaya;
+  public performanceData!: IperformenceData;
 
   constructor() {
     if (!window.performance || !window.performance.timing) {
@@ -39,6 +50,13 @@ export class PerformanceMonitor {
       FCP_Time: 0,
       LCP_Time: 0,
       FirstScreenTime: 0,
+      CacheHitRatio: {
+        total: 0,
+        mandatory_caching: 0,
+        negotiation_cache: 0,
+        no_cache: 0,
+        cacheRatio: 0,
+      },
     };
     this.performance = window.performance;
     this.timingInfo = window.performance.timing;
@@ -49,6 +67,7 @@ export class PerformanceMonitor {
      * 异步检测performance数据是否完备
      */
     this.getFirstScreenTime();
+    this.getCacheHitRatio();
 
     const entry = this.performance.getEntriesByType("navigation")[0];
     if (this.isDataExist(entry)) {
@@ -80,55 +99,55 @@ export class PerformanceMonitor {
   }
 
   // 重定向耗时
-  public getRedirectTime() {
+  private getRedirectTime() {
     this.performanceData.RedirectTime =
       this.timingInfo.redirectEnd - this.timingInfo.redirectStart;
   }
 
   // dns查询耗时
-  public getDnsTime() {
+  private getDnsTime() {
     this.performanceData.DnsTime =
       this.timingInfo.domainLookupEnd - this.timingInfo.domainLookupStart;
   }
 
   // tcp连接耗时
-  public getTcpTime() {
+  private getTcpTime() {
     this.performanceData.TcpTime =
       this.timingInfo.connectEnd - this.timingInfo.connectStart;
   }
 
   // 读取页面第一个字节耗时
-  public getTimeOfFirstByte() {
+  private getTimeOfFirstByte() {
     this.performanceData.TimeOfFirstByte =
       this.timingInfo.responseStart - this.timingInfo.navigationStart;
   }
 
   // request请求耗时
-  public getReqTime() {
+  private getReqTime() {
     this.performanceData.ReqTime =
       this.timingInfo.responseEnd - this.timingInfo.responseStart;
   }
 
   // 解析纯DOM树耗时, 不包含js css等资源的加载和执行
-  public getParsePureDomTime() {
+  private getParsePureDomTime() {
     this.performanceData.ParsePureDomTime =
       this.timingInfo.domInteractive - this.timingInfo.domLoading;
   }
 
   // 页面资源加载耗时, 包含vue, js css等资源的加载和执行
-  public getDomContentLoadTime() {
+  private getDomContentLoadTime() {
     this.performanceData.DomContentLoadTime =
       this.timingInfo.domComplete - this.timingInfo.domInteractive;
   }
 
   // 页面load总耗时
-  public getLoadTime() {
+  private getLoadTime() {
     this.performanceData.LoadTime =
       this.timingInfo.loadEventStart - this.timingInfo.navigationStart;
   }
 
   //FP time，白屏时间
-  public async getFpTime() {
+  private async getFpTime() {
     const entryHandler: PerformanceObserverCallback = (list) => {
       for (const entry of list.getEntries()) {
         if (entry.name === "first-paint") {
@@ -142,7 +161,7 @@ export class PerformanceMonitor {
   }
 
   // 首次内容绘制时间 FCP
-  public async getFcpTime() {
+  private async getFcpTime() {
     const entryHandler: PerformanceObserverCallback = (list) => {
       for (const entry of list.getEntries()) {
         if (entry.name === "first-contentful-paint") {
@@ -156,7 +175,7 @@ export class PerformanceMonitor {
   }
 
   // 最大内容绘制时间 LCP
-  public async getLcpTime() {
+  private async getLcpTime() {
     const entryHandler: PerformanceObserverCallback = (list) => {
       if (observer) {
         observer.disconnect();
@@ -171,9 +190,39 @@ export class PerformanceMonitor {
   }
 
   // 首屏时间 FirstScreenTime
-  public getFirstScreenTime() {
+  private getFirstScreenTime() {
     observeFirstScreenPaint((time: number) => {
       this.performanceData.FirstScreenTime = time;
     });
+  }
+
+  //计算资源的缓存命中率
+  private getCacheHitRatio() {
+    let resources = this.performance.getEntries();
+    let total = resources.length;
+    let mandatory_caching = 0;
+    let negotiation_cache = 0;
+    let no_cache = 0;
+
+    for (let resource of resources as PerformanceResourceTiming[]) {
+      //强制缓存
+      if (resource.transferSize === 0) {
+        mandatory_caching++;
+      }
+      //协商缓存
+      else if (resource.encodedBodySize === 0) {
+        negotiation_cache++;
+      } else {
+        no_cache++;
+      }
+    }
+
+    this.performanceData.CacheHitRatio = {
+      total,
+      mandatory_caching,
+      negotiation_cache,
+      no_cache,
+      cacheRatio: 1 - no_cache / total,
+    };
   }
 }
