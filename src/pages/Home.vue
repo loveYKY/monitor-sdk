@@ -23,6 +23,15 @@
 		// 			tableData = res.data;
 		// 		});
 		// }, 500);
+
+		// 测试
+		setTimeout(() => {
+			fetch(`http://localhost:5174/hello`)
+				.then((response) => response.json())
+				.then((res) => {
+					console.log('res', res);
+				});
+		}, 500);
 	};
 	const fetchError = function () {
 		fetch('https://jsonplaceholder.typicode.com/posts/a', {
