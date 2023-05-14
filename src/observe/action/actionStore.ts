@@ -5,10 +5,9 @@
  * @email: zheng20010712@163.com
  * @Date: 2023-05-14 16:24:13
  * @LastEditors: ZhengXiaoRui
- * @LastEditTime: 2023-05-14 17:47:51
+ * @LastEditTime: 2023-05-14 19:29:55
  */
 import { getTimestamp, validateOption } from "../../utils/action";
-import _support from "../../utils/global";
 import { ActionStoreData, ACTION_TYPES, EVENT_TYPES, InitOptions } from "./types";
 
 /*

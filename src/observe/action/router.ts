@@ -5,6 +5,15 @@
  * @email: zheng20010712@163.com
  * @Date: 2023-05-14 16:30:59
  * @LastEditors: ZhengXiaoRui
+ * @LastEditTime: 2023-05-14 19:14:29
+ */
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: ZhengXiaoRui
+ * @email: zheng20010712@163.com
+ * @Date: 2023-05-14 16:30:59
+ * @LastEditors: ZhengXiaoRui
  * @LastEditTime: 2023-05-14 17:51:47
  */
 /*
@@ -17,7 +26,8 @@
  * @LastEditTime: 2023-05-14 16:57:35
  */
 
-import _support from "../../utils/global"
+import {_global, _support} from "../../utils/global"
+import { replaceAop } from "../common/replace"
 import { ACTION_TYPES, EVENT_TYPES, STATUS_CODE } from "./types"
 
 // lastHref 前一个页面的路由
@@ -42,7 +52,7 @@ export function historyReplace() {
                     status: STATUS_CODE.OK
                 })
             }
-            return originHistoryFn.apply(this,args)
+            return originHistoryFn.apply(_global,args)
         }
     }
       // 重写pushState事件
@@ -51,14 +61,3 @@ export function historyReplace() {
   replaceAop(window.history, "replaceState", historyReplaceFn);
 }
 
-export function replaceAop(source: any, name: string, fn: Function) {
-    if (source === undefined) return;
-    if (name in source) {
-      var original = source[name];
-      var wrapped = fn(original);
-      if (typeof wrapped === "function") {
-        source[name] = wrapped;
-      }
-    }
-  }
-  

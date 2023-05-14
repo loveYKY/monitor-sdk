@@ -1,4 +1,5 @@
-import _support from "../../utils/global"
+
+import { _support } from "../../utils/global"
 import { ACTION_TYPES, EVENT_TYPES, STATUS_CODE } from "./types"
 
 export function domReplace() {

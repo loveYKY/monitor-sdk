@@ -5,7 +5,7 @@
  * @email: zheng20010712@163.com
  * @Date: 2023-05-14 16:24:13
  * @LastEditors: ZhengXiaoRui
- * @LastEditTime: 2023-05-14 17:29:36
+ * @LastEditTime: 2023-05-14 19:22:35
  */
 export interface ActionStoreData {
     type: EVENT_TYPES; // 事件类型
