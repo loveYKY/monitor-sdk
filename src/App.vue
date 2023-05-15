@@ -18,14 +18,17 @@
 	import { defineComponent } from 'vue';
 	import HelloWorld from './components/HelloWorld.vue';
 	import { PerformanceMonitor } from './observe/performance/index';
+import ActionMonitor from './observe/action/actionMonitor';
 
-	export default defineComponent({
+export default defineComponent({
 		components: {
 			HelloWorld,
 		},
 		setup() {
 			let p = new PerformanceMonitor();
 			p.start();
+			let actionMonitor = new ActionMonitor()
+			actionMonitor.start()
 		},
 	});
 </script>
