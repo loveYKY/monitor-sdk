@@ -3,4 +3,5 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from './router'
-createApp(App).use(router).mount('#app')
+import errorCapture from './utils/errorCapture'
+createApp(App).use(router).use(errorCapture).mount('#app')
