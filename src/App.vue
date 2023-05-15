@@ -50,9 +50,11 @@ export default defineComponent({
 	@keyframes typing {
 		from {
 			width: 0;
+			opacity: 0;
 		}
 		to {
 			width: 100%;
+			opacity: 1;
 		}
 	}
 
@@ -64,7 +66,7 @@ export default defineComponent({
 		font-weight: bold;
 		color: #333;
 		white-space: nowrap;
-		animation: typing 1s steps(100, end) forwards;
+		animation: typing 2s steps(100, end) forwards;
 	}
 	.nav {
 		font-size: 20px;

@@ -23,15 +23,14 @@
 		// 			tableData = res.data;
 		// 		});
 		// }, 500);
-
 		// 测试
-		setTimeout(() => {
-			fetch(`http://localhost:5174/hello`)
-				.then((response) => response.json())
-				.then((res) => {
-					console.log('res', res);
-				});
-		}, 500);
+		// setTimeout(() => {
+		// 	fetch(`http://localhost:5174/hello`)
+		// 		.then((response) => response.json())
+		// 		.then((res) => {
+		// 			console.log('res', res);
+		// 		});
+		// }, 500);
 	};
 	const fetchError = function () {
 		fetch('https://jsonplaceholder.typicode.com/posts/a', {
@@ -57,24 +56,26 @@
 				// 非空断言操作符告诉编译器忽略 undefined 类型上没有 length 属性的错误
 				console.log('1');
 			}
-		});
+		},1000);
 	};
 	const codeErr = function () {
 		getTableData();
 		let a: any = undefined;
 		if (a.length) {
-			console.log('1');
 		}
 	};
 	const resourceError = function () {
 		let script = document.createElement('script');
 		script.type = 'text/javascript';
-		script.src = 'https://abc.com/index.js';
+		script.src = 'ht://www.gro.com/jajva.j';
+
 		document.body.appendChild(script);
 		// 资源加载失败
-		script.onerror = () => {
-			getTableData();
-		};
+		// script.onerror = (e) => {
+		// 	console.log('onerror',e)
+		// 	getTableData();
+		// };
+		
 	};
 	const promiseErr = function () {
 		new Promise((resolve) => {
