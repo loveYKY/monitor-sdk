@@ -1,11 +1,17 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: ZhengXiaoRui
+ * @email: zheng20010712@163.com
+ * @Date: 2023-05-14 19:37:59
+ * @LastEditors: ZhengXiaoRui
+ * @LastEditTime: 2023-06-03 16:39:46
+ */
 import {_global, _support} from "../../utils/global"
 import { EVENT_TYPES, ACTION_TYPES, STATUS_CODE } from "../action/types"
 import { replaceAop } from "./replace"
 
-/**
- * 待debug
- */
-const fetchReaplace = function () {
+export const fetchReaplace = function () {
     const fetchReplaceFn = function(originalFetch: Function) {
         return function (url: string, config: Partial<Request> = {}) {
         //记录开始时间
